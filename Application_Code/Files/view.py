@@ -1,6 +1,6 @@
 import streamlit as stream
 import pandas as pd
-from sql_connect import cursor, connection
+from sql_connect import cursor
 
 def run():
     tables = ['Authors', 'Books', 'Countries', 'Custreamomers', 'Orders', 'Order Details', 'Publications']
@@ -32,10 +32,6 @@ def run():
         logical_condition = stream.sidebar.selectbox(f"Enter logical operator for '{col}'", ['Blank', 'AND', 'OR'])
         mapping[col] = (condition, value, logical_condition)
 
-    # if stream.button('Run Query'):
-    #     run_query(mapping)
-
-
     with stream.form(key = 'view_form'):
         submit = stream.form_submit_button('Run Query')
     if submit:
@@ -65,7 +61,6 @@ def run_query(mapping, select_columns, filter_columns, table_name):
     
     try:
         stream.code(f"Executed Query: \n{sql}", language='sql')
-        # stream.write("Executed Query: ",sql)
         cursor.execute(sql)
         column_names = [desc[0] for desc in cursor.description]
         result = cursor.fetchall()

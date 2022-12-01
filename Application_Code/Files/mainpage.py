@@ -83,7 +83,7 @@ def run():
             run_query(stream.session_state.title)
         if insert_button:
             insert_data(stream.session_state.title)
-    except:
+    except Exception as e:
         stream.write("Error in Query",e)
     
 
