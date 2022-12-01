@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from sql_connect import cursor, connection
 
-def app():
+def run():
     tables = ['Authors', 'Books', 'Countries', 'Customers', 'Orders', 'Order Details', 'Publications']
     tables.sort()
 
