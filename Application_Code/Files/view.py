@@ -1,12 +1,12 @@
-import streamlit as st
+import streamlit as stream
 import pandas as pd
 from sql_connect import cursor, connection
 
 def run():
-    tables = ['Authors', 'Books', 'Countries', 'Customers', 'Orders', 'Order Details', 'Publications']
+    tables = ['Authors', 'Books', 'Countries', 'Custreamomers', 'Orders', 'Order Details', 'Publications']
     tables.sort()
 
-    table = st.sidebar.selectbox("Tables", tables)
+    table = stream.sidebar.selectbox("Tables", tables)
     table_name = "".join(table.lower().split())
 
     sql = f"SELECT * FROM {table_name};"
@@ -17,25 +17,27 @@ def run():
     df = cursor.fetchall()
     df = pd.DataFrame(df, columns=column_names)
 
-    caption = f"<h3 style='text-align: center'>{table} Table</h3>"
-    st.caption(caption, unsafe_allow_html=True)
+    caption = f"<h3 streamyle='text-align: center'>{table} Table</h3>"
+    stream.caption(caption, unsafe_allow_html=True)
     
-    st.dataframe(df, use_container_width=True)
+    stream.dataframe(df, use_container_width=True)
 
-    select_columns = st.sidebar.multiselect(f"Select Columns from {table} Table", column_names)
-    filter_columns = st.sidebar.multiselect(f"Filter table on columns", column_names)
+    select_columns = stream.sidebar.multiselect(f"Select Columns from {table} Table", column_names)
+    filter_columns = stream.sidebar.multiselect(f"Filter table on columns", column_names)
 
     mapping = dict()
     for col in filter_columns:
-        condition = st.sidebar.selectbox(f"Choose operator for '{col}'", ['<', '>', '<=', '>=', "=", "<>", "in", "not in", "like", "not like", "between", "not between", "is null", "is not null", "is true", "is not true", "is false", "is not false"])
-        value = st.sidebar.text_input(f"Enter value to filter-on for '{col}'")
-        logical_condition = st.sidebar.selectbox(f"Enter logical operator for '{col}'", ['Blank', 'AND', 'OR'])
+        condition = stream.sidebar.selectbox(f"Choose operator for '{col}'", ['<', '>', '<=', '>=', "=", "<>", "in", "not in", "like", "not like", "between", "not between", "is null", "is not null", "is true", "is not true", "is false", "is not false"])
+        value = stream.sidebar.text_input(f"Enter value to filter-on for '{col}'")
+        logical_condition = stream.sidebar.selectbox(f"Enter logical operator for '{col}'", ['Blank', 'AND', 'OR'])
         mapping[col] = (condition, value, logical_condition)
 
-    # if st.button('Run Query'):
+    # if stream.button('Run Query'):
     #     run_query(mapping)
-    form = st.form(key='view_form')
-    submit = form.form_submit_button('Run Query')
+
+
+    with stream.form(key = 'view_form'):
+        submit = stream.form_submit_button('Run Query')
     if submit:
         run_query(mapping, select_columns, filter_columns, table_name)
 
@@ -62,12 +64,13 @@ def run_query(mapping, select_columns, filter_columns, table_name):
                 sql += f" {logical_condition}"
     
     try:
-        print(sql)
+        stream.code(f"Executed Query: \n{sql}", language='sql')
+        # stream.write("Executed Query: ",sql)
         cursor.execute(sql)
         column_names = [desc[0] for desc in cursor.description]
         result = cursor.fetchall()
         data = pd.DataFrame(result, columns=column_names)
-        st.write("Query Result:")
-        st.dataframe(data, use_container_width=True)
+        stream.write("Query Result:")
+        stream.dataframe(data, use_container_width=True)
     except Exception as e:
-        st.write("Please enter a valid SQL query.")
+        stream.write("Please enter a valid SQL query.")
